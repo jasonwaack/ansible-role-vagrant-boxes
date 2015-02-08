@@ -1,4 +1,7 @@
 ---
-# Placeholder to test build process
-- name: Just output success
-  debug: msg="SUCCESS"
+# Setup vagrant environment
+- name: Create working Vagrant project directory
+  file: path={{vagrant_working_directory}} state=directory
+
+- name: Create target Vagrant project directory
+  file: path={{vagrant_target_directory}} state=directory

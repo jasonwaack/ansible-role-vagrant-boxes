@@ -1,0 +1,3 @@
+---
+vagrant_working_directory: "/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/working"
+vagrant_target_directory: "/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/target"
