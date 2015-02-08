@@ -1,5 +1,6 @@
 ---
 - name:
-  hosts:
+  hosts: localhost
+  remote_user: root
   roles:
     - ansible-role-vagrant-boxes
