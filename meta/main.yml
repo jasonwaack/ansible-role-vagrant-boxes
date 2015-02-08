@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: jasonwaack
+  description: Create, provision, and package Vagrant boxes.
+  license: MIT
+  min_ansible_version: 1.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: OSX
+      versions:
+        - all
+  categories:
+    - development
+    - web
+
+dependencies: []

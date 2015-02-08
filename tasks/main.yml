@@ -1,0 +1,4 @@
+---
+# Placeholder to test build process
+- name: Just output success
+  debug: msg="SUCCESS"
