@@ -1,0 +1,16 @@
+---
+- name: Destroy any VMs created on prior runs
+  shell: vagrant destroy -f
+  args:
+    chdir: "{{vagrant_working_directory}}"
+    creates: Vagrantfile
+
+- name: Remove working directory and any previous artifacts
+  file: path={{vagrant_working_directory}} state=absent
+  register: delete_dir
+
+- name: debug
+  debug: var=delete_dir
+
+- name: Re-Create a NEW working Vagrant project directory
+  file: path={{vagrant_working_directory}} state=directory

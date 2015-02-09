@@ -1,7 +1,23 @@
 ---
 # Setup vagrant environment
+- name: Check that Vagrant is installed
+  shell: vagrant --version
+
 - name: Create working Vagrant project directory
   file: path={{vagrant_working_directory}} state=directory
+  register: create_working_dir_result
+
+- name: create_working_dir_result
+  debug: var=create_working_dir_result
 
 - name: Create target Vagrant project directory
   file: path={{vagrant_target_directory}} state=directory
+
+- name: Clean up previous runs of roles
+  include: cleanup-working-directory.yml
+  when: create_working_dir_result.changed == false
+
+- name: Vagrant init
+  shell: vagrant init
+  args:
+    chdir: "{{vagrant_working_directory}}"
