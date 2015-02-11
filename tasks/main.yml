@@ -1,4 +1,9 @@
 ---
+
+
+# add host to group 'just_created' with variable foo=42
+- add_host: name=somebox groups=vagrant
+
 # Setup vagrant environment
 - name: Check that Vagrant is installed
   shell: vagrant --version
@@ -21,3 +26,37 @@
   shell: vagrant init
   args:
     chdir: "{{vagrant_working_directory}}"
+
+- name: Generate the Vagrantfile
+  template: src="Vagrantfile.j2" dest="{{vagrant_working_directory}}/Vagrantfile"
+
+- name: Vagrant up
+  shell: vagrant up
+  args:
+    chdir: "{{vagrant_working_directory}}"
+
+- name: halt VMs
+  shell: vagrant halt
+  args:
+    chdir: "{{vagrant_working_directory}}"
+
+- name: remove box files if they already exists
+  file: path={{vagrant_working_directory}}/{{item}}.box state=absent
+  with_items: groups['vagrant']
+
+- name: Package the modified vagrant VMs
+  shell: vagrant up {{item}} && vagrant package --output {{item}}.box
+  args:
+    chdir: "{{vagrant_working_directory}}"
+  with_items: groups['vagrant']
+
+- name: copy vagrant file to destination directory
+  copy: src={{vagrant_working_directory}}/Vagrantfile dest={{vagrant_target_directory}}/Vagrantfile
+
+- name: copy boxes to destination directory
+  copy: src={{vagrant_working_directory}}/{{item}}.box dest={{vagrant_target_directory}}/{{item}}.box
+  with_items: groups['vagrant']
+
+- name: Update Vagrant file to use newly created boxes
+  lineinfile: dest={{vagrant_working_directory}}/vagrant_boxes/Vagrantfile regexp="{{item}}.vm.box"  line="{{item}}.vm.box = {{item}}"
+  with_items: groups['vagrant']
