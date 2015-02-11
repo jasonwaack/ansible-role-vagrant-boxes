@@ -3,7 +3,7 @@
   shell: vagrant destroy -f
   args:
     chdir: "{{vagrant_working_directory}}"
-    creates: Vagrantfile
+#    creates: "{{vagrant_working_directory}}/Vagrantfile"
 
 - name: Remove working directory and any previous artifacts
   file: path={{vagrant_working_directory}} state=absent
