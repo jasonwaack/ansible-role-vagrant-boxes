@@ -1,0 +1,49 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#{{ ansible_managed }}
+
+Vagrant.configure(2) do |config|
+
+{% for host in groups['vagrant'] %}
+  {% set guest = host -%}
+  {% set box = hostvars[host]['box'] | default(vagrant_box_box) -%}
+  {% set check_update = hostvars[host]['check_update'] | default(vagrant_box_check_update) -%}
+  {% set private_network = hostvars[host]['private_network'] | default(vagrant_box_private_network) -%}
+  {% set disable_default_synched_directory = hostvars[host]['disable_default_synched_directory'] | default(vagrant_box_disable_default_synched_directory) -%}
+  {% set synched_directories = hostvars[host]['synched_directories'] | default(vagrant_box_synched_directories) -%}
+
+##### {{guest}} #############################################################
+  config.vm.define "{{guest}}" do |{{guest}}|
+    {{guest}}.vm.hostname = "{{guest}}"
+    {{guest}}.vm.box = "{{box}}"
+
+    # Automatic box update checking (recommended default true)
+    config.vm.box_check_update = {{check_update}}
+
+    {% if private_network == "false" %}
+    # No private network defined
+    {% elif private_network == "dhcp" %}
+    # Private network using DHCP
+    {{guest}}.vm.network "private_network", type: "dhcp"
+    {% else %}
+    # Private network using static IP
+    {{guest}}.vm.network "private_network", ip: "{{private_network}}"
+    {% endif %}
+
+    # Default Vagrant synched directory
+    {{guest}}.vm.synced_folder ".", "/vagrant", disabled: {{disable_default_synched_directory}}
+
+    {% for synched_directory in synched_directories %}
+    # Share additional folder to the guest VM
+    # {{guest}}.vm.synced_folder "{{synched_directory.host_directory}}", "{{synched_directory.guest_directory}}", create: {{synched_directory.create_host_directory}}
+    {% endfor %}
+
+    {{guest}}.vm.provision "ansible" do |ansible|
+      ansible.playbook = "../../vagrant-provision.yml"
+    end
+
+
+  end
+{% endfor %}
+
+end
