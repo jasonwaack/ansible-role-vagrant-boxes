@@ -1,5 +1,5 @@
 ---
-- name:
+- name: Dev environment setup within Vagrantfile
   hosts: localhost
   connection: local
   gather_facts: no
