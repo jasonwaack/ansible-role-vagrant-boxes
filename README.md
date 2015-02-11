@@ -16,3 +16,18 @@ them are as follows.
 
     # Some section
     variable: value                               
+
+Dependencies
+------------
+
+None
+
+License
+-------
+
+MIT
+
+Author Information
+------------------
+
+Jason Waack
