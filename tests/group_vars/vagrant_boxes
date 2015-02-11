@@ -1,0 +1,2 @@
+vagrant_private_network_ip: false
+vagrant_enable_default_synched_directory: true
