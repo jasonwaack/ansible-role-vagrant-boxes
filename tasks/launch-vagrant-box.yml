@@ -1,0 +1,67 @@
+---
+- debug: vars=ansible_connection
+
+# add host to group 'just_created' with variable foo=42
+# - add_host: name=somebox groups=vagrant
+
+# Setup vagrant environment
+- name: Check that Vagrant is installed
+  shell: vagrant --version
+
+- name: Create building Vagrant project directory
+  file: path={{vagrant_box_building_directory}} state=directory
+  register: create_building_dir_result
+
+- name: create_building_dir_result
+  debug: var=create_building_dir_result
+
+- name: Create target Vagrant project directory
+  file: path={{vagrant_box_target_directory}} state=directory
+
+- name: Clean up previous runs of roles
+  include: cleanup-building-directory.yml
+  when: create_building_dir_result.changed == false
+
+- name: Vagrant init
+  shell: vagrant init
+  args:
+    chdir: "{{vagrant_box_building_directory}}"
+
+- name: DEBUGer
+  debug: var=hostvars[item]
+  with_items: groups['target_vagrant_boxes']
+
+- name: Generate the Vagrantfile
+  template: src="Vagrantfile.j2" dest="{{vagrant_box_building_directory}}/Vagrantfile"
+
+- name: Vagrant up
+  shell: vagrant up | grep "SSH address" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b"
+  args:
+    chdir: "{{vagrant_box_building_directory}}"
+  register: vagrant_up
+
+- debug: var=vagrant_up
+
+- name: add hosts
+  add_host: name="{{item}}_building"
+            groups=vagrant_building
+            ansible_ssh_user=vagrant
+            ansible_ssh_pass=vagrant
+            ansible_ssh_port=2222
+            ansible_ssh_host={{vagrant_up['stdout']}}
+  with_items: groups['target_vagrant_boxes']
+
+- name: Make sure the known hosts file exists
+  file: path="~/.ssh/known_hosts" state=touch
+
+- name: Remove previous declarations of IP from known_hosts
+  lineinfile:
+    dest=~/.ssh/known_hosts
+    regexp="{{ vagrant_up['stdout'] }}"
+    state=absent
+
+- name: pause for VMs to be ready to response to ssh-keyscan
+  pause: seconds=10
+
+- name: Add VM to known_hosts
+  shell: "ssh-keyscan -p 2222 -t rsa -T 10 {{ vagrant_up['stdout'] }} >> ~/.ssh/known_hosts"

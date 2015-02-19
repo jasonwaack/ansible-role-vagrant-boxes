@@ -1,0 +1,29 @@
+---
+- name: Halt VMs
+  shell: vagrant halt
+  args:
+    chdir: "{{vagrant_box_building_directory}}"
+
+- name: Remove box files if they already exists
+  file: path={{vagrant_box_building_directory}}/{{item|replace("_building","")}}.box state=absent
+  with_items: groups['vagrant_building']
+
+- name: Package the modified vagrant VMs
+  shell: vagrant up {{item|replace("_building","")}} && vagrant package --output {{item|replace("_buidling","")}}.box
+  args:
+    chdir: "{{vagrant_box_building_directory}}"
+  with_items: groups['vagrant_building']
+
+- name: Copy vagrant file to destination directory
+  copy: src={{vagrant_box_building_directory}}/Vagrantfile dest={{vagrant_box_target_directory}}/Vagrantfile
+
+- name: Copy boxes to destination directory
+  copy: src={{vagrant_box_building_directory}}/{{item}}.box dest={{vagrant_box_target_directory}}/{{item|replace("_building","")}}.box
+  with_items: groups['vagrant_building']
+
+- name: Update Vagrant file to use newly created boxes
+  lineinfile: dest={{vagrant_box_target_directory}}/Vagrantfile regexp="{{item|replace("_building","")}}.vm.box ="  line="    {{item|replace("_building","")}}.vm.box = '{{item|replace("_building","")}}'"
+  with_items: groups['vagrant_building']
+
+- name: Update Vagrant file to remove ansible playbook
+  lineinfile: dest={{vagrant_box_target_directory}}/Vagrantfile regexp="# only for build" state=absent
