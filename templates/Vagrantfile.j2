@@ -4,45 +4,60 @@
 
 Vagrant.configure(2) do |config|
 
-{% for host in groups['vagrant'] %}
-  {% set guest = host -%}
+{% for host in groups['target_vagrant_boxes'] %}
+  {% set guest = host  -%}
+  {% set hostname = hostvars[host]['hostname'] | default(vagrant_box_hostname)  -%}
   {% set box = hostvars[host]['box'] | default(vagrant_box_box) -%}
   {% set check_update = hostvars[host]['check_update'] | default(vagrant_box_check_update) -%}
   {% set private_network = hostvars[host]['private_network'] | default(vagrant_box_private_network) -%}
+  {% set forwarded_ports = hostvars[host]['forwarded_ports'] | default(vagrant_box_forwarded_ports) -%}
   {% set disable_default_synched_directory = hostvars[host]['disable_default_synched_directory'] | default(vagrant_box_disable_default_synched_directory) -%}
   {% set synched_directories = hostvars[host]['synched_directories'] | default(vagrant_box_synched_directories) -%}
+  {% set playbook = hostvars[host]['playbook'] | default(vagrant_box_playbook) -%}
 
 ##### {{guest}} #############################################################
   config.vm.define "{{guest}}" do |{{guest}}|
-    {{guest}}.vm.hostname = "{{guest}}"
+    {{guest}}.vm.hostname = "{{hostname}}"
     {{guest}}.vm.box = "{{box}}"
 
     # Automatic box update checking (recommended default true)
-    config.vm.box_check_update = {{check_update}}
+    {{guest}}.vm.box_check_update = {{check_update}}
 
-    {% if private_network == "false" %}
+    ### Networking
+    {% if private_network == "false" -%}
     # No private network defined
-    {% elif private_network == "dhcp" %}
+    {% elif private_network == "dhcp" -%}
     # Private network using DHCP
     {{guest}}.vm.network "private_network", type: "dhcp"
-    {% else %}
+    {% else -%}
     # Private network using static IP
     {{guest}}.vm.network "private_network", ip: "{{private_network}}"
     {% endif %}
 
+    #### Forwarded Ports
+    {% if forwarded_ports -%}
+    {% for forwarded_port in forwarded_ports -%}
+    {{guest}}.vm.network "forwarded_port", host: "{{forwarded_port['host_port']}}", guest: "{{forwarded_port['guest_port']}}"
+    {% endfor -%}
+    {% endif %}
+
+    ### Synched Directories
     # Default Vagrant synched directory
     {{guest}}.vm.synced_folder ".", "/vagrant", disabled: {{disable_default_synched_directory}}
 
-    {% for synched_directory in synched_directories %}
+    {% if synched_directories -%}
+    {% for synched_directory in synched_directories -%}
     # Share additional folder to the guest VM
-    # {{guest}}.vm.synced_folder "{{synched_directory.host_directory}}", "{{synched_directory.guest_directory}}", create: {{synched_directory.create_host_directory}}
-    {% endfor %}
+    {{guest}}.vm.synced_folder "{{synched_directory.host_directory}}", "{{synched_directory.guest_directory}}", create: {{synched_directory.create_host_directory}}
+    {% endfor -%}
+    {% endif %}
 
-    {{guest}}.vm.provision "ansible" do |ansible|
-      ansible.playbook = "../../vagrant-provision.yml"
-    end
-
-
+    ### Provisioning                               # only for build
+    {% if playbook -%}
+    {{guest}}.vm.provision "ansible" do |ansible|  # only for build
+      ansible.playbook = "{{playbook}}"            # only for build
+    end                                            # only for build
+    {% endif -%}
   end
 {% endfor %}
 
