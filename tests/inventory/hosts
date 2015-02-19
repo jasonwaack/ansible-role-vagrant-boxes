@@ -1,0 +1,15 @@
+local_host
+webserver_box a=b
+
+[control_machine]
+local_host
+
+[control_machine:vars]
+vagrant_box_building_directory=/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/ansible-role-vagrant-boxes/building
+vagrant_box_target_directory=/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/ansible-role-vagrant-boxes/target
+
+[target_vagrant_boxes]
+webserver_box
+
+
+[vagrant_building]

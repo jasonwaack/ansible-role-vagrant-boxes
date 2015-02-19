@@ -1,0 +1,21 @@
+---
+- name: launch base Vagrant box to be provisioned
+  hosts: control_machine
+  gather_facts: no
+  tasks:
+    - include: ./roles/ansible-role-vagrant-boxes/tasks/launch-vagrant-box.yml
+
+- name: provision websever
+  hosts: vagrant_building
+  sudo: yes
+  tasks:
+    - name: install nginx
+      apt: name=nginx
+    - name: update
+      lineinfile: dest=/etc/nginx/sites-available/default line="root /var/www;" regexp="^\s*root /usr/share/nginx/html;" state=present
+
+- name: package provisioned Vagrant box
+  hosts: control_machine
+  gather_facts: no
+  tasks:
+    - include: ./roles/ansible-role-vagrant-boxes/tasks/package-vagrant-box.yml

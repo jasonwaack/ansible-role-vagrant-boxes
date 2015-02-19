@@ -1,0 +1,15 @@
+hostname: webserver-box
+box: ubuntu14
+check_update: "true"
+private_network: "false"
+disable_default_synched_directory: "false"
+forwarded_ports:
+  - {host_port: 8081, guest_port: 80, auto_correct: "true"}
+synched_directories:
+  - {create_host_directory: "true", host_directory: "./www", guest_directory: "/var/www"}
+virtual_box_gui: "false"
+virtual_box_cpu: 1
+virtual_box_memory: 1028
+playbook: "../tests/webserver.yml"
+
+ssh_known_hosts_file: ~/.ssh/known_hosts

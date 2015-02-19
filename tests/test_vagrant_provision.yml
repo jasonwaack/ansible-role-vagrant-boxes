@@ -1,7 +1,8 @@
 ---
 - name: Dev environment setup within Vagrantfile
-  hosts: localhost
-  connection: local
+  hosts: control_machine
   gather_facts: no
+  vars:
+    playbook: "./webserver.yml"
   roles:
     - ansible-role-vagrant-boxes

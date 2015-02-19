@@ -1,0 +1,8 @@
+---
+- name: provision websever
+  sudo: yes
+  tasks:
+    - name: install nginx
+      apt: name=nginx
+    - name: update
+      lineinfile: dest=/etc/nginx/sites-available/default line="root /var/www;" regexp="^\s*root /usr/share/nginx/html;" state=present
