@@ -10,6 +10,7 @@ synched_directories:
 virtual_box_gui: "false"
 virtual_box_cpu: 1
 virtual_box_memory: 1028
-playbook: "../tests/webserver.yml"
+#playbook: "../tests/webserver.yml"
+playbook:
 
 ssh_known_hosts_file: ~/.ssh/known_hosts
