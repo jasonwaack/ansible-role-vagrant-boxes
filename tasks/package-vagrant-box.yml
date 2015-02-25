@@ -1,4 +1,7 @@
 ---
+- name: include default values, when called directly, not as part of larger role
+  include_vars: main.yml
+
 - name: Halt VMs
   shell: vagrant halt
   args:

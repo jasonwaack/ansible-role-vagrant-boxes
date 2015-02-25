@@ -1,4 +1,8 @@
 ---
+- name:
+  include_vars: main.yml
+
+
 - debug: vars=ansible_connection
 
 # add host to group 'just_created' with variable foo=42
