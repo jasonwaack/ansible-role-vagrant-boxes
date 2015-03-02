@@ -12,7 +12,7 @@ vagrant_box_disable_default_synched_directory: "false"
 vagrant_box_forwarded_ports:
   - {host_port: 8080, guest_port: 80, auto_correct: "true"}
 vagrant_box_synched_directories:
-  - {create_host_directory: "false", host_directory: "../data", guest_directory: "/vagrant_data"}
+#  - {create_host_directory: "false", host_directory: "../data", guest_directory: "/vagrant_data"}
 vagrant_box_virtual_box_gui: "false"
 vagrant_box_virtual_box_cpu: 1
 vagrant_box_virtual_box_memory: 1028
