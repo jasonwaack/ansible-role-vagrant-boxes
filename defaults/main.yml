@@ -1,21 +1,37 @@
 ---
-vagrant_box_working_directory: "/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/ansible-role-vagrant-boxes/working"
-vagrant_box_target_directory: "/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/ansible-role-vagrant-boxes/target"
+vagrant_box_working_directory: "./working"
+vagrant_box_target_directory: "./target"
 
+# Vagrant will set the guest machine's hostname to this string if it is set
+vagrant_box_hostname:
 
-vagrant_box_hostname: guest-machine
-vagrant_box_box: ubuntu14
+# Name of an installed box or a shorthand name of a box in HashiCorp's Atlas that will be provisioned
+vagrant_box_box: "ubuntu14"
+
+# Vagrant will check for updates to the configured box on every vagrant up if true
 vagrant_box_check_update: "true"
+
+# Vagrant will assign a private IP address if set.  Specify either "dhcp" or a static IP address.
 vagrant_box_private_network: "false"
+# vagrant_box_private_network: dhcp
 # vagrant_box_private_network: 192.168.33.10
+
+# Vagrant will disable the default /vagrant share if set to true
 vagrant_box_disable_default_synched_directory: "false"
-vagrant_box_forwarded_ports:
-#  - {host_port: 8080, guest_port: 80, auto_correct: "true"}
+
+# Vagrnat will create supplied list of sync directories
 vagrant_box_synched_directories:
 #  - {create_host_directory: "false", host_directory: "../data", guest_directory: "/vagrant_data"}
+
+# Vagrant will create supplied list of forwarded ports
+vagrant_box_forwarded_ports:
+#  - {host_port: 8080, guest_port: 80, auto_correct: "true"}
+
+
+# Virtual Box provider specific settings
 vagrant_box_virtual_box_gui: "false"
 vagrant_box_virtual_box_cpu: 1
 vagrant_box_virtual_box_memory: 1028
 vagrant_box_playbook:
 
-ssh_known_hosts_file: ~/.ssh/known_hosts
+# ssh_known_hosts_file: ~/.ssh/known_hosts

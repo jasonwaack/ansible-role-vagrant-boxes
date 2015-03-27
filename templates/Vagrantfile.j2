@@ -17,7 +17,10 @@ Vagrant.configure(2) do |config|
 
 ##### {{guest}} #############################################################
   config.vm.define "{{guest}}" do |{{guest}}|
+
+    {% if hostname -%}
     {{guest}}.vm.hostname = "{{hostname}}"
+    {% endif -%}
     {{guest}}.vm.box = "{{box}}"
 
     # Automatic box update checking (recommended default true)
