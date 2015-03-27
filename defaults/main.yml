@@ -1,6 +1,6 @@
 ---
-vagrant_box_working_directory: "./working"
-vagrant_box_target_directory: "./target"
+vagrant_box_building_directory: "{{ playbook_dir }}/build"
+vagrant_box_target_directory: "{{ playbook_dir }}/target"
 
 # Vagrant will set the guest machine's hostname to this string if it is set
 vagrant_box_hostname:
