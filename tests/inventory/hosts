@@ -1,12 +1,8 @@
-local_host
-webserver_box a=b
+localhost ansible_connection=local
 
 [control_machine]
-local_host
+localhost
 
-[control_machine:vars]
-vagrant_box_building_directory=/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/ansible-role-vagrant-boxes/building
-vagrant_box_target_directory=/Users/MacBookPro/Development/github/ansible-role-vagrant-boxes-shell/roles/ansible-role-vagrant-boxes/target
 
 [target_vagrant_boxes]
 webserver_box
